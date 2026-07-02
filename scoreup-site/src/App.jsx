@@ -39,7 +39,7 @@ const getOrMakeStreak=()=>{
   const now=new Date(),days=[];
   for(let i=89;i>=0;i--){
     const d=new Date(now);d.setDate(now.getDate()-i);
-    days.push({date:d.toISOString().split('T')[0],on:Math.random()>.5});
+    days.push({date:d.toISOString().split('T')[0],on:false});
   }
   days[days.length-1].on=true;
   localStorage.setItem('su_streak',JSON.stringify(days));
