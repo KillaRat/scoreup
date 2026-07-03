@@ -51,7 +51,7 @@ const diffColor=d=>d==='easy'?'var(--success)':d==='hard'?'var(--danger)':'var(-
 
 /* ─── API ───────────────────────────────────────────────────── */
 async function genQuestion(test,subj,qType,weakness,difficulty){
-  const weak=subj.subtopics.filter(t=>(weakness[t]||65)<70);
+  const weak=subj.subtopics.filter(t=>(weakness[t]??0)<70);
   const target=weak.length>0?weak[Math.floor(Math.random()*weak.length)]:subj.subtopics[Math.floor(Math.random()*subj.subtopics.length)];
   const isMCQ=qType==='mcq';
   const diffMap={easy:'straightforward, suitable for beginners',medium:'moderately challenging',hard:'very difficult, suitable for top scorers'};
@@ -368,7 +368,7 @@ function HubPage({test,subjs,accent,weakness,onSubj,onAssess,onBack}){
       </div>
       <div className="subjects-grid">
         {subjs.map(s=>{
-          const avg=Math.round(s.subtopics.reduce((a,t)=>a+(weakness[t]||65),0)/s.subtopics.length);
+          const avg=Math.round(s.subtopics.reduce((a,t)=>a+(weakness[t]??0),0)/s.subtopics.length);
           return(
             <div className="subj-card" key={s.id} onClick={()=>onSubj(s)}>
               <div className="subj-icon" style={{background:s.bg}}>{s.icon}</div>
@@ -412,6 +412,7 @@ function Dashboard({user,profile,weakness,streak,streakDays,onTest,totalQ,sessCo
         <div className="cal-leg"><div className="cal-leg-box" style={{background:'var(--bg-elevated)'}}/><span>No activity</span><div className="cal-leg-box" style={{background:'var(--sat)'}}/><span>Studied</span><div className="cal-leg-box" style={{background:'var(--act)'}}/><span>Today</span></div>
       </div>
       <div className="section-hd">Focus areas</div>
+      {all.length===0&&<div style={{background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:"var(--r)",padding:"1.5rem",textAlign:"center",marginBottom:"2rem",color:"var(--text-2)",fontSize:14}}>Complete your first practice session to see your focus areas.</div>}
       <div className="focus-grid" style={{marginBottom:'2rem'}}>
         {bottom.map(([t,v])=>(
           <div className="focus-item" key={t}>
@@ -653,7 +654,7 @@ export default function App(){
   const showToast=msg=>{setToast({msg,show:true});setTimeout(()=>setToast(t=>({...t,show:false})),2800);};
 
   const handleAuth=u=>{setUser(u);setShowAuth(false);if(!onboarded)setPage('onboard');else setPage('dashboard');};
-  const handleOnboard=data=>{setProfile(data);setOnboarded(true);setWeakness({...initWeakness(SAT_SUBJS),...initWeakness(ACT_SUBJS)});setPage('dashboard');showToast('Welcome to ScoreUp! 🎉');};
+  const handleOnboard=data=>{setProfile(data);setOnboarded(true);setWeakness({});setPage('dashboard');showToast('Welcome to ScoreUp! 🎉');};
   const handleLogout=()=>{setUser(null);setProfile(null);setOnboarded(false);setPage('landing');};
 
   const handleTest=t=>{setActiveTest(t);setPage('hub');};
